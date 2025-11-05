@@ -22,6 +22,8 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.huertohogar.R
 import com.example.huertohogar.ui.components.HomeCard
+import androidx.compose.material.icons.filled.Place
+
 
 data class HomeItem(
     val title: String,
@@ -48,6 +50,8 @@ fun HomeLandingScreen(navController: NavController) {
         HomeItem("Usuarios", "Ver, editar y registrar", Icons.Filled.List, "listUsers", cardColors[0]),
         HomeItem("Registrar", "Agregar nuevo usuario", Icons.Filled.AccountCircle, "registro", cardColors[1]),
         HomeItem("Catálogo", "Explorar nuestros productos", Icons.Filled.ShoppingCart, "catalogo", cardColors[2]),
+        HomeItem("Ubicación", "Si quieres comprar presencialmente", Icons.Filled.Place, "ubicacion", cardColors[3]) // 👈 NUEVO
+
     )
 
     Scaffold(

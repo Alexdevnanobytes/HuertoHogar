@@ -2,6 +2,8 @@ package com.example.huertohogar.ui.screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
@@ -25,45 +27,60 @@ fun EditUserScreen(
     userId: Int,
     modifier: Modifier = Modifier
 ) {
-    // Buscar el user por ID
     val users by viewModel.users.collectAsState(initial = emptyList())
     val user = users.find { it.id == userId }
 
-    // Estados locales para edición
-    var nombre by remember { mutableStateOf(user?.nombre ?: "") }
-    var correo by remember { mutableStateOf(user?.correo ?: "") }
-    var clave by remember { mutableStateOf(user?.clave ?: "") }
-    var direccion by remember { mutableStateOf(user?.direccion ?: "") }
-    var aceptaTerminos by remember { mutableStateOf(user?.aceptaTerminos ?: false) }
+    if (user == null) {
+        Scaffold(
+            topBar = {
+                TopAppBar(
+                    title = { Text("Editar Usuario", color = Color.White) },
+                    navigationIcon = {
+                        IconButton(onClick = { navController.popBackStack() }) {
+                            Icon(Icons.Default.ArrowBack, contentDescription = "Volver", tint = Color.White)
+                        }
+                    },
+                    colors = TopAppBarDefaults.topAppBarColors(
+                        containerColor = Color(0xFF2E7D32)
+                    )
+                )
+            }
+        ) { inner ->
+            Box(
+                modifier = Modifier
+                    .padding(inner)
+                    .fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Text("Usuario no encontrado")
+            }
+        }
+        return
+    }
 
-    // Estados para errores
+    // Estados
+    var nombre by remember { mutableStateOf("") }
+    var correo by remember { mutableStateOf("") }
+    var clave by remember { mutableStateOf("") }
+    var direccion by remember { mutableStateOf("") }
+    var aceptaTerminos by remember { mutableStateOf(user.aceptaTerminos) }
     var errores by remember { mutableStateOf(mapOf<String, String>()) }
 
-    // Paleta de colores coherente
-    val primaryColor = Color(0xFF2E7D32) // Verde oscuro
-    val secondaryColor = Color(0xFF4CAF50) // Verde
-    val backgroundColor = Color(0xFFF5F5F5) // Fondo gris claro
-    val cardColor = Color.White // Fondo blanco para contenido
-    val textColor = Color(0xFF333333) // Texto oscuro
-    val errorColor = Color(0xFFD32F2F) // Rojo para errores
+    // Colores
+    val primaryColor = Color(0xFF2E7D32)
+    val secondaryColor = Color(0xFF4CAF50)
+    val backgroundColor = Color(0xFFF5F5F5)
+    val cardColor = Color.White
+    val textColor = Color(0xFF333333)
+    val errorColor = Color(0xFFD32F2F)
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = {
-                    Text(
-                        "Editar Usuario",
-                        color = Color.White,
-                        fontWeight = FontWeight.Medium
-                    )
-                },
+                title = { Text("Editar Usuario", color = Color.White, fontWeight = FontWeight.Medium) },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(
-                            Icons.Default.ArrowBack,
-                            contentDescription = "Volver",
-                            tint = Color.White
-                        )
+                        Icon(Icons.Default.ArrowBack, contentDescription = "Volver", tint = Color.White)
                     }
                 },
                 actions = {
@@ -77,25 +94,15 @@ fun EditUserScreen(
                             }
                         }
                     }) {
-                        Icon(
-                            Icons.Filled.Home,
-                            contentDescription = "Inicio",
-                            tint = Color.White
-                        )
+                        Icon(Icons.Filled.Home, contentDescription = "Inicio", tint = Color.White)
                     }
-                    if (user != null) {
-                        IconButton(
-                            onClick = {
-                                viewModel.deleteUser(user)
-                                navController.popBackStack()
-                            }
-                        ) {
-                            Icon(
-                                Icons.Default.Delete,
-                                contentDescription = "Eliminar",
-                                tint = Color.White
-                            )
+                    IconButton(
+                        onClick = {
+                            viewModel.deleteUser(user)
+                            navController.popBackStack()
                         }
+                    ) {
+                        Icon(Icons.Default.Delete, contentDescription = "Eliminar", tint = Color.White)
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -107,144 +114,83 @@ fun EditUserScreen(
         },
         containerColor = backgroundColor
     ) { innerPadding ->
+        // ✅ Scroll vertical
         Column(
             modifier = modifier
                 .padding(innerPadding)
                 .fillMaxSize()
+                .verticalScroll(rememberScrollState())
                 .background(backgroundColor)
         ) {
-            // Tarjeta principal para el formulario
             Card(
                 modifier = Modifier
-                    .fillMaxSize()
+                    .fillMaxWidth()
                     .padding(16.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = cardColor
-                ),
+                colors = CardDefaults.cardColors(containerColor = cardColor),
                 elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
             ) {
                 Column(
                     modifier = Modifier
-                        .fillMaxSize()
+                        .fillMaxWidth()
                         .padding(24.dp),
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    // Título de bienvenida
                     Text(
                         "Editar Información",
                         style = MaterialTheme.typography.headlineSmall,
                         color = primaryColor,
                         fontWeight = FontWeight.Bold
                     )
-
                     Text(
                         "Modifica los datos del usuario",
                         style = MaterialTheme.typography.bodyMedium,
                         color = Color(0xFF757575)
                     )
 
-                    Spacer(Modifier.height(8.dp))
-
-                    // Campos del formulario
+                    // Campos con placeholders
                     OutlinedTextField(
                         value = nombre,
                         onValueChange = { nombre = it; errores = errores - "nombre" },
                         label = { Text("Nombre completo") },
+                        placeholder = { Text(user.nombre, color = Color(0xFF9E9E9E)) },
                         isError = errores["nombre"] != null,
-                        supportingText = {
-                            errores["nombre"]?.let {
-                                Text(it, color = errorColor)
-                            }
-                        },
+                        supportingText = { errores["nombre"]?.let { Text(it, color = errorColor) } },
                         modifier = Modifier.fillMaxWidth(),
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = secondaryColor,
-                            unfocusedBorderColor = Color.Gray,
-                            focusedLabelColor = secondaryColor,
-                            unfocusedLabelColor = Color.Gray,
-                            cursorColor = secondaryColor,
-                            focusedTextColor = textColor,
-                            unfocusedTextColor = textColor,
-                            errorBorderColor = errorColor,
-                            errorLabelColor = errorColor,
-                            errorSupportingTextColor = errorColor
-                        )
+                        colors = fieldColors(secondaryColor, textColor, errorColor)
                     )
 
                     OutlinedTextField(
                         value = correo,
                         onValueChange = { correo = it; errores = errores - "correo" },
                         label = { Text("Correo electrónico") },
+                        placeholder = { Text(user.correo, color = Color(0xFF9E9E9E)) },
                         isError = errores["correo"] != null,
-                        supportingText = {
-                            errores["correo"]?.let {
-                                Text(it, color = errorColor)
-                            }
-                        },
+                        supportingText = { errores["correo"]?.let { Text(it, color = errorColor) } },
                         modifier = Modifier.fillMaxWidth(),
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = secondaryColor,
-                            unfocusedBorderColor = Color.Gray,
-                            focusedLabelColor = secondaryColor,
-                            unfocusedLabelColor = Color.Gray,
-                            cursorColor = secondaryColor,
-                            focusedTextColor = textColor,
-                            unfocusedTextColor = textColor,
-                            errorBorderColor = errorColor,
-                            errorLabelColor = errorColor,
-                            errorSupportingTextColor = errorColor
-                        )
+                        colors = fieldColors(secondaryColor, textColor, errorColor)
                     )
 
                     OutlinedTextField(
                         value = clave,
                         onValueChange = { clave = it; errores = errores - "clave" },
-                        label = { Text("Contraseña") },
+                        label = { Text("Contraseña (dejar en blanco para mantener)") },
+                        placeholder = { Text("••••••••", color = Color(0xFF9E9E9E)) },
                         visualTransformation = PasswordVisualTransformation(),
                         isError = errores["clave"] != null,
-                        supportingText = {
-                            errores["clave"]?.let {
-                                Text(it, color = errorColor)
-                            }
-                        },
+                        supportingText = { errores["clave"]?.let { Text(it, color = errorColor) } },
                         modifier = Modifier.fillMaxWidth(),
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = secondaryColor,
-                            unfocusedBorderColor = Color.Gray,
-                            focusedLabelColor = secondaryColor,
-                            unfocusedLabelColor = Color.Gray,
-                            cursorColor = secondaryColor,
-                            focusedTextColor = textColor,
-                            unfocusedTextColor = textColor,
-                            errorBorderColor = errorColor,
-                            errorLabelColor = errorColor,
-                            errorSupportingTextColor = errorColor
-                        )
+                        colors = fieldColors(secondaryColor, textColor, errorColor)
                     )
 
                     OutlinedTextField(
                         value = direccion,
                         onValueChange = { direccion = it; errores = errores - "direccion" },
                         label = { Text("Dirección") },
+                        placeholder = { Text(user.direccion, color = Color(0xFF9E9E9E)) },
                         isError = errores["direccion"] != null,
-                        supportingText = {
-                            errores["direccion"]?.let {
-                                Text(it, color = errorColor)
-                            }
-                        },
+                        supportingText = { errores["direccion"]?.let { Text(it, color = errorColor) } },
                         modifier = Modifier.fillMaxWidth(),
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = secondaryColor,
-                            unfocusedBorderColor = Color.Gray,
-                            focusedLabelColor = secondaryColor,
-                            unfocusedLabelColor = Color.Gray,
-                            cursorColor = secondaryColor,
-                            focusedTextColor = textColor,
-                            unfocusedTextColor = textColor,
-                            errorBorderColor = errorColor,
-                            errorLabelColor = errorColor,
-                            errorSupportingTextColor = errorColor
-                        )
+                        colors = fieldColors(secondaryColor, textColor, errorColor)
                     )
 
                     // Checkbox de términos
@@ -268,27 +214,29 @@ fun EditUserScreen(
                         )
                     }
 
-                    Spacer(Modifier.height(16.dp))
+                    Spacer(Modifier.height(12.dp))
 
-                    // Botón principal de guardar
+                    // Botón Guardar
                     Button(
                         onClick = {
-                            // Validar formulario
+                            val mergedNombre = if (nombre.isBlank()) user.nombre else nombre
+                            val mergedCorreo = if (correo.isBlank()) user.correo else correo
+                            val mergedClave = if (clave.isBlank()) user.clave else clave
+                            val mergedDir = if (direccion.isBlank()) user.direccion else direccion
+
                             val nuevosErrores = mutableMapOf<String, String>()
-
-                            if (nombre.isBlank()) nuevosErrores["nombre"] = "El nombre no puede estar vacío"
-                            if (!correo.contains("@")) nuevosErrores["correo"] = "Correo inválido"
-                            if (clave.length < 6) nuevosErrores["clave"] = "La clave debe tener al menos 6 caracteres"
-                            if (direccion.isBlank()) nuevosErrores["direccion"] = "La dirección no puede estar vacía"
-
+                            if (mergedNombre.isBlank()) nuevosErrores["nombre"] = "El nombre no puede estar vacío"
+                            if (!mergedCorreo.contains("@")) nuevosErrores["correo"] = "Correo inválido"
+                            if (mergedClave.length < 6) nuevosErrores["clave"] = "La clave debe tener al menos 6 caracteres"
+                            if (mergedDir.isBlank()) nuevosErrores["direccion"] = "La dirección no puede estar vacía"
                             errores = nuevosErrores
 
-                            if (nuevosErrores.isEmpty() && user != null) {
+                            if (nuevosErrores.isEmpty()) {
                                 val userActualizado = user.copy(
-                                    nombre = nombre,
-                                    correo = correo,
-                                    clave = clave,
-                                    direccion = direccion,
+                                    nombre = mergedNombre,
+                                    correo = mergedCorreo,
+                                    clave = mergedClave,
+                                    direccion = mergedDir,
                                     aceptaTerminos = aceptaTerminos
                                 )
                                 viewModel.updateUser(userActualizado)
@@ -307,34 +255,39 @@ fun EditUserScreen(
                             pressedElevation = 8.dp
                         )
                     ) {
-                        Text(
-                            "Guardar Cambios",
-                            style = MaterialTheme.typography.bodyLarge,
-                            fontWeight = FontWeight.Medium
-                        )
+                        Text("Guardar Cambios", style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Medium)
                     }
 
-                    Spacer(Modifier.height(8.dp))
-
-                    // Botón secundario para cancelar
                     OutlinedButton(
                         onClick = { navController.popBackStack() },
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(56.dp),
-                        colors = ButtonDefaults.outlinedButtonColors(
-                            contentColor = secondaryColor
-                        ),
+                        colors = ButtonDefaults.outlinedButtonColors(contentColor = secondaryColor),
                         border = ButtonDefaults.outlinedButtonBorder
                     ) {
-                        Text(
-                            "Cancelar",
-                            style = MaterialTheme.typography.bodyLarge,
-                            fontWeight = FontWeight.Medium
-                        )
+                        Text("Cancelar", style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Medium)
                     }
                 }
             }
         }
     }
 }
+
+@Composable
+private fun fieldColors(
+    secondaryColor: Color,
+    textColor: Color,
+    errorColor: Color
+) = OutlinedTextFieldDefaults.colors(
+    focusedBorderColor = secondaryColor,
+    unfocusedBorderColor = Color.Gray,
+    focusedLabelColor = secondaryColor,
+    unfocusedLabelColor = Color.Gray,
+    cursorColor = secondaryColor,
+    focusedTextColor = textColor,
+    unfocusedTextColor = textColor,
+    errorBorderColor = errorColor,
+    errorLabelColor = errorColor,
+    errorSupportingTextColor = errorColor
+)

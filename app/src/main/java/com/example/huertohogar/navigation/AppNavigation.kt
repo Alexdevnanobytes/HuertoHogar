@@ -40,5 +40,15 @@ fun AppNavigation(
             val userId = backStackEntry.arguments?.getString("userId")?.toIntOrNull() ?: 0
             EditUserScreen(navController, viewModel, userId)
         }
+        composable("ubicacion") { UbicacionScreen(navController) }
+
+        composable("pago") {
+            PaymentScreen(
+                navController = navController,
+                usersViewModel = viewModel,      // tu UsersViewModel que ya pasas a AppNavigation
+                cartViewModel = cartViewModel    // el CartViewModel que ya usas en carrito
+            )
+        }
+
     }
 }

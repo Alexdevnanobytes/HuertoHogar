@@ -3,6 +3,7 @@ package com.example.huertohogar.ui.screen
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -20,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.huertohogar.model.CartItem
 import com.example.huertohogar.viewmodel.CartViewModel
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -29,12 +31,16 @@ fun CarritoScreen(
 ) {
     val items by cartViewModel.cart.collectAsState()
 
-    // Paleta de colores coherente
-    val primaryColor = Color(0xFF2E7D32) // Verde oscuro
+    // 🎨 Paleta
+    val primaryColor = Color(0xFF2E7D32)   // Verde oscuro
     val secondaryColor = Color(0xFF4CAF50) // Verde
-    val backgroundColor = Color(0xFFF5F5F5) // Fondo gris claro
-    val cardColor = Color.White // Fondo blanco para contenido
-    val textColor = Color(0xFF333333) // Texto oscuro
+    val backgroundColor = Color(0xFFF5F5F5)
+    val cardColor = Color.White
+    val textColor = Color(0xFF333333)
+
+    // 👇 Snackbar host + scope
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
 
     Scaffold(
         topBar = {
@@ -80,7 +86,19 @@ fun CarritoScreen(
                 )
             )
         },
-        containerColor = backgroundColor
+        containerColor = backgroundColor,
+        // ✅ Correcto: la lambda NO recibe parámetros; cerramos sobre snackbarHostState
+        snackbarHost = {
+            SnackbarHost(hostState = snackbarHostState) { data ->
+                Snackbar(
+                    snackbarData = data,
+                    containerColor = primaryColor,        // verde oscuro
+                    contentColor = Color.White,            // texto blanco
+                    actionColor = Color.White,
+                    dismissActionContentColor = Color.White
+                )
+            }
+        }
     ) { inner ->
         Column(
             modifier = Modifier
@@ -112,10 +130,7 @@ fun CarritoScreen(
                             verticalArrangement = Arrangement.Center,
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            Text(
-                                "🛒",
-                                style = MaterialTheme.typography.displayMedium
-                            )
+                            Text("🛒", style = MaterialTheme.typography.displayMedium)
                             Spacer(Modifier.height(16.dp))
                             Text(
                                 "Tu carrito está vacío",
@@ -146,16 +161,36 @@ fun CarritoScreen(
                             items(items, key = { it.product.id }) { ci ->
                                 CartRow(
                                     item = ci,
-                                    onQtyChange = { newQty -> cartViewModel.updateQty(ci.product.id, newQty) },
-                                    onRemove = { cartViewModel.removeProduct(ci.product.id) },
+                                    onQtyChange = { newQty ->
+                                        // Si la cantidad es 0, se elimina y avisamos
+                                        if (newQty <= 0) {
+                                            cartViewModel.updateQty(ci.product.id, 0)
+                                            scope.launch {
+                                                snackbarHostState.showSnackbar(
+                                                    message = "Eliminado del carrito",
+                                                    withDismissAction = true,
+                                                    duration = SnackbarDuration.Short
+                                                )
+                                            }
+                                        } else {
+                                            cartViewModel.updateQty(ci.product.id, newQty)
+                                        }
+                                    },
+                                    onRemove = {
+                                        cartViewModel.removeProduct(ci.product.id)
+                                        scope.launch {
+                                            snackbarHostState.showSnackbar(
+                                                message = "Eliminado del carrito",
+                                                withDismissAction = true,
+                                                duration = SnackbarDuration.Short
+                                            )
+                                        }
+                                    },
                                     primaryColor = primaryColor,
                                     secondaryColor = secondaryColor,
                                     textColor = textColor
                                 )
-                                Divider(
-                                    color = Color(0xFFEEEEEE),
-                                    thickness = 1.dp
-                                )
+                                Divider(color = Color(0xFFEEEEEE), thickness = 1.dp)
                             }
                         }
 
@@ -167,9 +202,7 @@ fun CarritoScreen(
                             elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
                             modifier = Modifier.fillMaxWidth()
                         ) {
-                            Column(
-                                modifier = Modifier.padding(16.dp)
-                            ) {
+                            Column(modifier = Modifier.padding(16.dp)) {
                                 val total = cartViewModel.cartTotal
                                 Row(
                                     modifier = Modifier.fillMaxWidth(),
@@ -191,7 +224,9 @@ fun CarritoScreen(
                                 Spacer(Modifier.height(16.dp))
 
                                 Button(
-                                    onClick = { /* TODO: flujo de pago */ },
+                                    onClick = {
+                                        navController.navigate("pago")    // ← antes mostraba snackbar; ahora navega
+                                    },
                                     enabled = items.isNotEmpty(),
                                     modifier = Modifier
                                         .fillMaxWidth()
@@ -230,30 +265,30 @@ private fun CartRow(
     textColor: Color
 ) {
     Card(
-        colors = CardDefaults.cardColors(
-            containerColor = Color.White
-        ),
+        colors = CardDefaults.cardColors(containerColor = Color.White),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
         modifier = Modifier.fillMaxWidth()
     ) {
-        Row(
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            // Miniatura
+            // 1) Imagen (arriba)
             Image(
                 painter = painterResource(id = item.product.imageRes),
                 contentDescription = item.product.name,
-                modifier = Modifier.size(64.dp)
+                modifier = Modifier
+                    .size(84.dp)
             )
 
-            // Información del producto
+            // 2) Textos (nombre, precio, subtotal)
             Column(
-                modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(4.dp)
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(4.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
                     text = item.product.name,
@@ -262,22 +297,23 @@ private fun CartRow(
                     color = textColor
                 )
                 Text(
-                    "Precio: $${item.product.price}",
+                    text = "Precio: $${item.product.price}",
                     style = MaterialTheme.typography.bodyMedium,
                     color = Color(0xFF757575)
                 )
                 Text(
-                    "Subtotal: $${item.subtotal}",
+                    text = "Subtotal: $${item.subtotal}",
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.SemiBold,
                     color = primaryColor
                 )
             }
 
-            // Controles de cantidad
+            // 3) Cantidad (editable)
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(4.dp)
+                verticalArrangement = Arrangement.spacedBy(6.dp),
+                modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
                     "Cantidad",
@@ -291,7 +327,7 @@ private fun CartRow(
                         onQtyChange(newText.toIntOrNull() ?: 0)
                     },
                     singleLine = true,
-                    modifier = Modifier.width(80.dp),
+                    modifier = Modifier.width(90.dp),
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedBorderColor = secondaryColor,
                         unfocusedBorderColor = Color.Gray,
@@ -303,15 +339,16 @@ private fun CartRow(
                 )
             }
 
-            // Botón eliminar
+            // 4) Eliminar (abajo)
             IconButton(
                 onClick = onRemove,
-                modifier = Modifier.size(48.dp)
+                modifier = Modifier
+                    .size(40.dp)
             ) {
                 Icon(
                     Icons.Filled.Delete,
                     contentDescription = "Eliminar",
-                    tint = Color(0xFFD32F2F) // Rojo para acciones destructivas
+                    tint = Color(0xFFD32F2F)
                 )
             }
         }
