@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Para external cache directory -->
+    <external-cache-path name="external_cache" path="." />
+
+    <!-- Para internal cache directory -->
+    <cache-path name="internal_cache" path="." />
+
+    <!-- Para external files directory -->
+    <external-files-path name="external_files" path="." />
+
+    <!-- Para files directory -->
+    <files-path name="files" path="." />
+
+    <!-- Específico para imágenes en cache -->
+    <external-cache-path name="camera_images" path="Pictures/" />
+</paths>

@@ -50,5 +50,9 @@ fun AppNavigation(
             )
         }
 
+        composable("camara") {
+            CamaraScreen(navController = navController)
+        }
+
     }
 }

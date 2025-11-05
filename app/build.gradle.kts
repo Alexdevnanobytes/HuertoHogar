@@ -43,6 +43,17 @@ android {
 }
 
 dependencies {
+    // CameraX
+    implementation("androidx.camera:camera-core:1.4.0-alpha04")
+    implementation("androidx.camera:camera-camera2:1.4.0-alpha04")
+    implementation("androidx.camera:camera-lifecycle:1.4.0-alpha04")
+    implementation("androidx.camera:camera-view:1.4.0-alpha04")
+
+    // Para FileProvider
+    implementation("androidx.core:core-ktx:1.12.0")
+
+    implementation("com.google.android.gms:play-services-maps:19.0.0")
+    implementation("com.google.maps.android:maps-compose:4.3.3")
     // ---- Compose BOM (controla ui/material3/animation, etc.)
     implementation(platform("androidx.compose:compose-bom:2024.10.00"))
 

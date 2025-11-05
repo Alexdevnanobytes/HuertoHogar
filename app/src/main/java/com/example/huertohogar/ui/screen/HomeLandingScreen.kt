@@ -8,12 +8,12 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material.icons.filled.Eco
+import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.material.icons.filled.List
+import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -22,21 +22,19 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.huertohogar.R
 import com.example.huertohogar.ui.components.HomeCard
-import androidx.compose.material.icons.filled.Place
-
 
 data class HomeItem(
     val title: String,
     val desc: String,
     val icon: androidx.compose.ui.graphics.vector.ImageVector,
     val route: String,
-    val cardColor: Color // Nuevo parámetro para el color
+    val cardColor: androidx.compose.ui.graphics.Color
 )
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeLandingScreen(navController: NavController) {
-    // Definir una paleta de colores para las tarjetas
+
     val cardColors = listOf(
         Color(0xFF4CAF50), // Verde
         Color(0xFF2196F3), // Azul
@@ -50,8 +48,8 @@ fun HomeLandingScreen(navController: NavController) {
         HomeItem("Usuarios", "Ver, editar y registrar", Icons.Filled.List, "listUsers", cardColors[0]),
         HomeItem("Registrar", "Agregar nuevo usuario", Icons.Filled.AccountCircle, "registro", cardColors[1]),
         HomeItem("Catálogo", "Explorar nuestros productos", Icons.Filled.ShoppingCart, "catalogo", cardColors[2]),
-        HomeItem("Ubicación", "Si quieres comprar presencialmente", Icons.Filled.Place, "ubicacion", cardColors[3]) // 👈 NUEVO
-
+        HomeItem("Cámara", "Tomar fotos de productos", Icons.Filled.CameraAlt, "camara", cardColors[3]),
+        HomeItem("Ubicación", "Encuentra nuestra tienda", Icons.Filled.LocationOn, "ubicacion", cardColors[4]) // NUEVO BOTÓN
     )
 
     Scaffold(
@@ -65,18 +63,18 @@ fun HomeLandingScreen(navController: NavController) {
                     )
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color(0xFF2E7D32), // Verde oscuro
+                    containerColor = Color(0xFF2E7D32),
                     titleContentColor = Color.White
                 )
             )
         },
-        containerColor = Color(0xFFF5F5F5) // Color de fondo de la pantalla
+        containerColor = Color(0xFFF5F5F5)
     ) { inner ->
         Column(
             modifier = Modifier
                 .padding(inner)
                 .fillMaxSize()
-                .background(Color(0xFFF5F5F5)) // Fondo gris claro
+                .background(Color(0xFFF5F5F5))
                 .padding(horizontal = 16.dp, vertical = 12.dp)
         ) {
             Row(
@@ -93,7 +91,7 @@ fun HomeLandingScreen(navController: NavController) {
             Text(
                 "Bienvenido 👋",
                 style = MaterialTheme.typography.headlineMedium,
-                color = Color(0xFF2E7D32) // Verde oscuro para el texto
+                color = Color(0xFF2E7D32)
             )
             Text(
                 "Elige una sección para comenzar",
@@ -114,7 +112,8 @@ fun HomeLandingScreen(navController: NavController) {
                         description = item.desc,
                         icon = item.icon,
                         onClick = { navController.navigate(item.route) },
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth(),
+                        cardColors = item.cardColor
                     )
                 }
             }
