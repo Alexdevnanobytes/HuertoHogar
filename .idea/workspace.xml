@@ -26,19 +26,26 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="938e95f4-1e64-4d81-8ae2-edcb5f7bad9e" name="Changes" comment="Lista la app">
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/example/huertohogar/data/remote/ApiService.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/example/huertohogar/data/remote/RetrofitInstance.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/example/huertohogar/data/repository/PostRepository.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/example/huertohogar/model/Post.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/example/huertohogar/ui/screen/PostScreen.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/example/huertohogar/viewmodel/PostViewModel.kt" afterDir="false" />
+    <list default="true" id="938e95f4-1e64-4d81-8ae2-edcb5f7bad9e" name="Changes" comment="Listo el api rest">
+      <change afterPath="$PROJECT_DIR$/app/src/androidTest/java/com/example/huertohogar/FakePlantaRepository.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/example/huertohogar/data/repository/HuertoRepository.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/example/huertohogar/model/MiHuerto.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/example/huertohogar/viewmodel/HuertoViewModel.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/example/huertohogar/viewmodel/HuertoViewModelFactory.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/example/huertohogar/viewmodel/PlantaViewModelFactory.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/test/java/com/example/huertohogar/PlantaViewModelTest.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/test/java/com/example/huertohogar/TestTablePlantaRepository.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/8.13/checksums/checksums.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.13/checksums/checksums.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/8.13/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.13/fileHashes/fileHashes.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/caches/deviceStreaming.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/caches/deviceStreaming.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/file-system.probe" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/file-system.probe" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/app/build.gradle.kts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/huertohogar/data/remote/ApiService.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/huertohogar/data/remote/ApiService.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/huertohogar/data/remote/RetrofitInstance.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/huertohogar/data/remote/RetrofitInstance.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/huertohogar/data/repository/PostRepository.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/huertohogar/data/repository/PlantaRepository.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/huertohogar/model/Post.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/huertohogar/model/Planta.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/huertohogar/ui/screen/PostScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/huertohogar/ui/screen/PlantaScreen.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/huertohogar/viewmodel/PostViewModel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/huertohogar/viewmodel/PlantaViewModel.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -79,8 +86,8 @@
         <option value="resourceFile" />
         <option value="Kotlin Interface" />
         <option value="Kotlin Object" />
-        <option value="Kotlin Class" />
         <option value="Kotlin File" />
+        <option value="Kotlin Class" />
       </list>
     </option>
   </component>
@@ -133,6 +140,7 @@
       <recent name="$PROJECT_DIR$/app/src/main/res/drawable" />
     </key>
     <key name="K2MoveDeclarationsDialog.RECENT_PACKAGE_KEY">
+      <recent name="com.example.huertohogar" />
       <recent name="com.example.huertohogar.viewmodel" />
     </key>
   </component>
@@ -226,12 +234,21 @@
       <option name="project" value="LOCAL" />
       <updated>1762315077785</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="Listo el api rest">
+      <option name="closed" value="true" />
+      <created>1764032111205</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1764032111205</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Lista la app" />
-    <option name="LAST_COMMIT_MESSAGE" value="Lista la app" />
+    <MESSAGE value="Listo el api rest" />
+    <option name="LAST_COMMIT_MESSAGE" value="Listo el api rest" />
   </component>
   <component name="play_dynamic_filters_status">
     <option name="appIdToCheckInfo">

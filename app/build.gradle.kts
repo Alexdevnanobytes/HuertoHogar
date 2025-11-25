@@ -65,7 +65,6 @@ dependencies {
     implementation(platform("androidx.compose:compose-bom:2024.10.00"))
 
     implementation("androidx.activity:activity-compose:1.9.3")
-    implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.animation:animation")
     implementation("androidx.compose.foundation:foundation:1.7.3")
     implementation("androidx.compose.material3:material3")
@@ -96,6 +95,31 @@ dependencies {
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation(platform("androidx.compose:compose-bom:2024.10.00"))
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
+
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
+    debugImplementation("androidx.compose.ui:ui-tooling")
+    testImplementation("io.kotest:kotest-runner-junit5:5.8.0")
+    testImplementation("io.kotest:kotest-assertions-core:5.8.0")
+
+    // JUnit 5
+    testImplementation("org.junit.jupiter:junit-jupiter:5.10.0")
+
+    // MockK para mocking
+    testImplementation("io.mockk:mockk:1.13.10")
+
+    // Coroutines Test
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.10.2")
+
+    // Compose UI Testing
+    androidTestImplementation("androidx.compose.ui:ui-test-junit4:1.6.2")
+    debugImplementation("androidx.compose.ui:ui-test-manifest:1.6.2")
+
+    // Android Test
+    androidTestImplementation("androidx.test.ext:junit:1.1.5")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+}
+
+tasks.withType<Test>().configureEach {
+    useJUnitPlatform()
 }
