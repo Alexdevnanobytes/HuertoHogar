@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Modifier
+import androidx.core.view.WindowCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.room.Room
 import com.example.huertohogar.data.local.AppDatabase
@@ -19,6 +20,9 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        // Permite que la app dibuje contenido debajo de las barras del sistema
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+
         // 1) Construir DB y Repository
         val db = Room.databaseBuilder(
             applicationContext,
@@ -26,7 +30,7 @@ class MainActivity : ComponentActivity() {
             "huerto_hogar_database"
         )
             .fallbackToDestructiveMigration(false)
-            .allowMainThreadQueries() // solo dev
+            .allowMainThreadQueries() // solo para desarrollo
             .build()
 
         val repository = UsersRepository(db.usersDao())
@@ -34,10 +38,11 @@ class MainActivity : ComponentActivity() {
 
         // 2) Instanciar ViewModels (fuera de Compose)
         val vmUsers = ViewModelProvider(this, factory)[UsersViewModel::class.java]
-        val vmCart  = ViewModelProvider(this)[CartViewModel::class.java]
+        val vmCart = ViewModelProvider(this)[CartViewModel::class.java]
 
-        // 3) UI
+        // 3) UI con Jetpack Compose
         setContent {
+            // Aplicamos el tema de la aplicación
             HuertoHogarTheme {
                 AppNavigation(
                     viewModel = vmUsers,

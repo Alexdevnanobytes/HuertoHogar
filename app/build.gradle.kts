@@ -43,6 +43,13 @@ android {
 }
 
 dependencies {
+    implementation("androidx.activity:activity-compose:1.11.0")
+    implementation("androidx.compose.material3:material3:1.4.0")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.9.4")
+    implementation("com.squareup.retrofit2:retrofit:3.0.0")
+    implementation("com.squareup.retrofit2:converter-gson:3.0.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.2")
+
     // CameraX
     implementation("androidx.camera:camera-core:1.4.0-alpha04")
     implementation("androidx.camera:camera-camera2:1.4.0-alpha04")
