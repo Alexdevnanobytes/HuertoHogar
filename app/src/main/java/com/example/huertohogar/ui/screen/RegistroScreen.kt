@@ -96,32 +96,36 @@ fun RegistroScreen(
         },
         containerColor = backgroundColor
     ) { inner ->
+
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(inner)
                 .background(backgroundColor)
                 .imePadding()
-                .navigationBarsPadding(), // evita que el teclado tape campos
-
+                .navigationBarsPadding(),
             contentPadding = PaddingValues(
                 start = 16.dp, end = 16.dp,
-                top = 16.dp, bottom = 24.dp             // ← más espacio abajo
+                top = 16.dp, bottom = 24.dp
             ),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
+
             item {
+
                 Card(
                     modifier = Modifier.fillMaxWidth(),
                     colors = CardDefaults.cardColors(containerColor = cardColor),
                     elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
                 ) {
+
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(24.dp),
                         verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
+
                         Text(
                             "Crear Nueva Cuenta",
                             style = MaterialTheme.typography.headlineSmall,
@@ -136,6 +140,8 @@ fun RegistroScreen(
                         )
 
                         Spacer(Modifier.height(8.dp))
+
+                        // ------------------- CAMPOS -------------------
 
                         OutlinedTextField(
                             value = estado.nombre,
@@ -218,10 +224,12 @@ fun RegistroScreen(
                             )
                         )
 
+                        // Términos
                         Column(
                             horizontalAlignment = Alignment.CenterHorizontally,
                             modifier = Modifier.padding(vertical = 8.dp)
                         ) {
+
                             Checkbox(
                                 checked = estado.aceptaTerminos,
                                 onCheckedChange = viewModel::onAceptarTerminosChanged,
@@ -230,28 +238,33 @@ fun RegistroScreen(
                                     checkmarkColor = Color.White
                                 )
                             )
+
                             Spacer(Modifier.width(8.dp))
+
                             Text(
                                 "Acepto los términos y condiciones",
                                 color = textColor,
                                 style = MaterialTheme.typography.bodyMedium
                             )
 
-
                             Spacer(Modifier.height(16.dp))
 
-                            // --- Botón principal ---
+                            // ------------------- BOTÓN CORREGIDO -------------------
+
                             Button(
                                 onClick = {
                                     if (viewModel.validateForm()) {
-                                        viewModel.saveUserToDB()
-                                        navController.navigate("listUsers")
+
+                                        viewModel.registrarUsuarioBackend()   // ⬅ Backend Spring Boot
+                                        viewModel.saveUserToDB()              // ⬅ Guarda en Room
+
+                                        navController.navigate("listUsers")   // ⬅ Va a la lista
                                     }
                                 },
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .defaultMinSize(minHeight = 52.dp),      // ← alto mínimo
-                                contentPadding = PaddingValues(vertical = 14.dp), // ← más “carne” interna
+                                    .defaultMinSize(minHeight = 52.dp),
+                                contentPadding = PaddingValues(vertical = 14.dp),
                                 colors = ButtonDefaults.buttonColors(
                                     containerColor = primaryColor,
                                     contentColor = Color.White
@@ -260,7 +273,6 @@ fun RegistroScreen(
                                     defaultElevation = 4.dp,
                                     pressedElevation = 8.dp
                                 )
-
                             ) {
                                 Text(
                                     "Registrar Usuario",
@@ -268,14 +280,17 @@ fun RegistroScreen(
                                     fontWeight = FontWeight.Medium
                                 )
                             }
+
+                            // -------------------------------------------------------
+
                             Spacer(Modifier.width(16.dp))
 
                             OutlinedButton(
                                 onClick = { navController.navigate("listUsers") },
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .defaultMinSize(minHeight = 52.dp),     // ← alto mínimo
-                                contentPadding = PaddingValues(vertical = 14.dp), // ← padding interno
+                                    .defaultMinSize(minHeight = 52.dp),
+                                contentPadding = PaddingValues(vertical = 14.dp),
                                 colors = ButtonDefaults.outlinedButtonColors(
                                     contentColor = secondaryColor
                                 ),
@@ -287,7 +302,6 @@ fun RegistroScreen(
                                     fontWeight = FontWeight.Medium
                                 )
                             }
-
                         }
                     }
                 }

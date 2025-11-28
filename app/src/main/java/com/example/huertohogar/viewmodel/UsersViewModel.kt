@@ -3,6 +3,8 @@ package com.example.huertohogar.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.huertohogar.data.local.Users
+import com.example.huertohogar.data.remote.UsuarioRemote
+import com.example.huertohogar.data.repository.UsersRemoteRepository
 import com.example.huertohogar.data.repository.UsersRepository
 import com.example.huertohogar.model.UsersUiState
 import com.example.huertohogar.model.UsersErrores
@@ -11,14 +13,20 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class UsersViewModel(private val repository: UsersRepository) : ViewModel() {
+class UsersViewModel(
+    private val repositoryLocal: UsersRepository,
+    private val repositoryRemote: UsersRemoteRepository = UsersRemoteRepository()
+) : ViewModel() {
 
     private val _estado = MutableStateFlow(UsersUiState())
     val estado: StateFlow<UsersUiState> = _estado
 
     // Flow para obtener todos los users
-    val users = repository.users
+    val users = repositoryLocal.users
 
+    // ------------------------
+    // Actualizar campos del formulario
+    // ------------------------
     fun onNombreChanged(valor: String) {
         _estado.update { it.copy(nombre = valor, errores = it.errores.copy(nombre = null)) }
     }
@@ -39,6 +47,9 @@ class UsersViewModel(private val repository: UsersRepository) : ViewModel() {
         _estado.update { it.copy(aceptaTerminos = valor) }
     }
 
+    // ------------------------
+    // Guardar en BD local (Room)
+    // ------------------------
     fun saveUserToDB() {
         viewModelScope.launch {
             val estadoActual = _estado.value
@@ -49,9 +60,9 @@ class UsersViewModel(private val repository: UsersRepository) : ViewModel() {
                 direccion = estadoActual.direccion,
                 aceptaTerminos = estadoActual.aceptaTerminos
             )
-            repository.insert(user)
+            repositoryLocal.insert(user)
 
-            // Limpiar el formulario después de guardar
+            // Limpiar formulario
             _estado.update {
                 it.copy(
                     nombre = "",
@@ -67,16 +78,19 @@ class UsersViewModel(private val repository: UsersRepository) : ViewModel() {
 
     fun updateUser(user: Users) {
         viewModelScope.launch {
-            repository.update(user)
+            repositoryLocal.update(user)
         }
     }
 
     fun deleteUser(user: Users) {
         viewModelScope.launch {
-            repository.delete(user)
+            repositoryLocal.delete(user)
         }
     }
 
+    // ------------------------
+    // Validación de formulario
+    // ------------------------
     fun validateForm(): Boolean {
         val estadoActual = _estado.value
         val errores = UsersErrores(
@@ -96,5 +110,29 @@ class UsersViewModel(private val repository: UsersRepository) : ViewModel() {
         _estado.update { it.copy(errores = errores) }
 
         return !hayErrores
+    }
+
+    // ------------------------
+    // Enviar usuario al BACKEND (Spring Boot)
+    // ------------------------
+    fun registrarUsuarioBackend() {
+        viewModelScope.launch {
+
+            val estadoActual = estado.value
+
+            val nuevo = UsuarioRemote(
+                username = estadoActual.nombre,
+                password = estadoActual.clave,
+                email = estadoActual.correo,
+                enabled = true
+            )
+
+            try {
+                val creado = repositoryRemote.crearUsuario(nuevo)
+                println("Usuario creado en backend: $creado")
+            } catch (e: Exception) {
+                println("Error al crear usuario backend: ${e.message}")
+            }
+        }
     }
 }
